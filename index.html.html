@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тест tools — виртуальный сайт и игры</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0e14;
+    --bg-2: #0f141c;
+    --surface: #131922;
+    --surface-2: #1a2230;
+    --border: #232c3d;
+    --border-2: #2e394d;
+    --text: #e8edf5;
+    --text-dim: #8b98b0;
+    --text-dim-2: #6c7a94;
+    --accent: #3b82f6;
+    --accent-2: #60a5fa;
+    --accent-glow: rgba(59, 130, 246, 0.35);
+    --green: #10b981;
+    --purple: #8b5cf6;
+    --pink: #ec4899;
+    --yellow: #f59e0b;
+    --radius: 14px;
+    --radius-lg: 20px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.6;
+    overflow-x: hidden;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 900px;
+    height: 900px;
+    background: radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ШАПКА */
+  header {
+    background: rgba(10, 14, 20, 0.75);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex; align-items: center; gap: 0.65rem;
+    font-size: 1.15rem; font-weight: 700; letter-spacing: -0.3px;
+    cursor: pointer;
+    transition: transform 0.25s ease, filter 0.25s ease;
+    user-select: none;
+  }
+  .logo:hover { transform: scale(1.03); filter: brightness(1.1); }
+  .logo:active { transform: scale(0.98); }
+
+  .logo-mark {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: linear-gradient(135deg, #ef4444, #f97316);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; font-weight: 800; color: #fff;
+    box-shadow: 0 0 18px rgba(239, 68, 68, 0.45);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  .logo:hover .logo-mark {
+    box-shadow: 0 0 28px rgba(239, 68, 68, 0.75), 0 0 48px rgba(249, 115, 22, 0.4);
+    transform: rotate(-4deg);
+  }
+
+  .logo-text { color: var(--text); transition: color 0.25s ease; }
+  .logo-text span { color: var(--accent-2); transition: color 0.25s ease; }
+  .logo:hover .logo-text span { color: #93c5fd; }
+
+  /* НАВИГАЦИЯ */
+  .nav-tabs {
+    display: flex; gap: 0.25rem;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 0.3rem;
+    margin: 1.5rem auto 0; width: fit-content;
+  }
+  .tab-btn {
+    background: transparent; border: none; color: var(--text-dim);
+    padding: 0.6rem 1.4rem; border-radius: 9px;
+    font-family: inherit; font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s ease;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active {
+    background: var(--accent); color: #fff;
+    box-shadow: 0 4px 14px var(--accent-glow);
+  }
+
+  .tab-content { display: none; width: 100%; flex: 1; }
+  .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+
+  main {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    padding: 0 2rem 4rem; max-width: 1200px; margin: 0 auto;
+    width: 100%; position: relative; z-index: 1;
+  }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 4rem 1rem 3rem;
+    max-width: 820px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.4rem 1rem; background: var(--surface);
+    border: 1px solid var(--border-2); border-radius: 30px;
+    font-size: 0.8rem; color: var(--text-dim);
+    margin-bottom: 1.5rem; font-weight: 500;
+  }
+  .hero-badge .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-2); box-shadow: 0 0 8px var(--accent-2);
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5.5vw, 3.2rem); font-weight: 800;
+    letter-spacing: -1.2px; line-height: 1.15;
+    margin-bottom: 1.25rem; color: var(--text);
+    text-align: center;
+  }
+  .hero h1 .grad {
+    background: linear-gradient(90deg, #60a5fa, #8b5cf6, #ec4899, #8b5cf6, #60a5fa);
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientFlow 4s linear infinite;
+    filter: drop-shadow(0 0 20px rgba(96, 165, 250, 0.35));
+  }
+  @keyframes gradientFlow {
+    0% { background-position: 0% center; }
+    100% { background-position: 300% center; }
+  }
+  .hero p {
+    color: var(--text-dim); font-size: 1.1rem;
+    max-width: 620px; margin: 0 auto 2rem;
+    text-align: center;
+  }
+
+  /* КНОПКИ */
+  .btn {
+    background: var(--accent); border: none; border-radius: 10px;
+    padding: 0.85rem 1.6rem; color: #fff;
+    font-weight: 600; font-size: 0.95rem; cursor: pointer;
+    transition: transform 0.1s, background 0.2s, box-shadow 0.2s;
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 0.5rem; white-space: nowrap; font-family: inherit;
+    box-shadow: 0 4px 14px var(--accent-glow);
+  }
+  .btn:hover { background: #2563eb; box-shadow: 0 6px 20px var(--accent-glow); transform: translateY(-1px); }
+  .btn:active { transform: scale(0.98); }
+  .btn-secondary {
+    background: var(--surface-2); border: 1px solid var(--border-2);
+    color: var(--text); box-shadow: none;
+  }
+  .btn-secondary:hover { background: #202a3a; box-shadow: none; border-color: #3a4964; }
+
+  /* ВИРТУАЛЬНОЕ ОКНО */
+  .virtual-window {
+    width: 100%; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .window-bar {
+    background: var(--bg-2); padding: 0.7rem 1rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .window-dots { display: flex; gap: 6px; }
+  .window-dots span { width: 11px; height: 11px; border-radius: 50%; }
+  .window-dots span:nth-child(1) { background: #ff5f57; }
+  .window-dots span:nth-child(2) { background: #febc2e; }
+  .window-dots span:nth-child(3) { background: #28c840; }
+  .window-url {
+    flex: 1; background: var(--bg); border-radius: 7px;
+    padding: 0.35rem 0.9rem; font-size: 0.82rem; color: var(--text-dim);
+    font-family: 'SF Mono', 'Consolas', monospace;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    border: 1px solid var(--border);
+  }
+  .window-content { padding: 2rem; min-height: 200px; }
+  .window-content .greeting {
+    font-size: 1.7rem; font-weight: 700;
+    margin-bottom: 0.5rem; color: var(--text); letter-spacing: -0.5px;
+  }
+  .window-content .greeting span { color: var(--accent-2); }
+  .window-content .desc { color: var(--text-dim); margin-bottom: 1.5rem; font-size: 0.98rem; }
+
+  /* СТАТИСТИКА */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .stat-card {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(180deg, var(--accent), var(--purple));
+    opacity: 0.7;
+  }
+  .stat-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
+  }
+  .stat-icon { font-size: 1.1rem; margin-bottom: 0.15rem; opacity: 0.9; }
+  .stat-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text);
+    font-family: 'SF Mono', monospace;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .stat-label {
+    font-size: 0.7rem;
+    color: var(--text-dim-2);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    font-weight: 600;
+  }
+
+  /* ТОП ИГР */
+  .top-games {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.1rem 1.2rem;
+    margin-top: 0.5rem;
+  }
+  .top-games-title {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin-bottom: 0.9rem;
+  }
+  .top-games-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .top-game-row {
+    display: grid;
+    grid-template-columns: 24px 28px 130px 1fr auto;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+  }
+  .top-game-rank {
+    font-family: 'SF Mono', monospace;
+    font-weight: 800;
+    color: var(--text-dim-2);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  .top-game-row:nth-child(1) .top-game-rank { color: #ffd700; }
+  .top-game-row:nth-child(2) .top-game-rank { color: #c0c0c0; }
+  .top-game-row:nth-child(3) .top-game-rank { color: #cd7f32; }
+  .top-game-icon { font-size: 1.15rem; text-align: center; }
+  .top-game-name {
+    color: var(--text);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .top-game-bar {
+    height: 8px;
+    background: var(--surface);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .top-game-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--purple));
+    border-radius: 4px;
+    transition: width 0.6s ease;
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+  }
+  .top-game-count {
+    font-family: 'SF Mono', monospace;
+    font-weight: 700;
+    color: var(--accent-2);
+    font-size: 0.85rem;
+    min-width: 30px;
+    text-align: right;
+  }
+  .top-game-empty {
+    color: var(--text-dim-2);
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 0.5rem 0;
+    font-style: italic;
+  }
+
+  /* SHOWCASE */
+  .showcase {
+    width: 100%; padding: 3rem 0;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: center;
+  }
+  .showcase.reverse .showcase-media { order: 2; }
+  .showcase.reverse .showcase-text { order: 1; }
+  .showcase-media {
+    position: relative; border-radius: var(--radius-lg);
+    overflow: hidden; border: 1px solid var(--border);
+    background: var(--surface); aspect-ratio: 16 / 10;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  }
+  .preview-canvas { width: 100%; height: 100%; display: block; }
+  .preview-badge {
+    position: absolute; bottom: 14px; left: 14px;
+    background: rgba(10, 14, 20, 0.9);
+    border: 1px solid var(--border-2);
+    border-radius: 8px; padding: 0.4rem 0.9rem;
+    font-size: 0.8rem; font-weight: 700; color: var(--accent-2);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .preview-stats {
+    position: absolute; top: 14px; right: 14px;
+    background: rgba(10, 14, 20, 0.9);
+    border: 1px solid var(--border-2);
+    border-radius: 8px; padding: 0.45rem 0.8rem;
+    font-size: 0.75rem; color: var(--text-dim);
+    backdrop-filter: blur(8px);
+    font-family: 'SF Mono', monospace;
+  }
+  .preview-stats b { color: var(--text); }
+  .showcase-text h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800;
+    letter-spacing: -0.8px; margin-bottom: 1rem; line-height: 1.2;
+  }
+  .showcase-text p { color: var(--text-dim); font-size: 1.02rem; line-height: 1.7; }
+  .showcase-text .accent-text { color: var(--accent-2); font-weight: 600; }
+
+  /* ЗАГОЛОВОК РАЗДЕЛА */
+  .features-header { width: 100%; margin-top: 3rem; margin-bottom: 1.5rem; text-align: left; }
+  .features-header h2 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.5rem; }
+  .features-header p { color: var(--text-dim); font-size: 0.95rem; }
+
+  /* СОЦСЕТИ */
+  .socials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  .social-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.4rem;
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .social-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--brand-glow, transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .social-card:hover {
+    border-color: var(--brand, var(--accent));
+    background: var(--surface-2);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.35), 0 0 0 1px var(--brand, var(--accent));
+  }
+  .social-card:hover::before { opacity: 0.06; }
+  .social-card:active { transform: translateY(-2px) scale(0.99); }
+
+  .social-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: var(--brand-bg, rgba(59,130,246,0.15));
+    border: 1px solid var(--brand-border, rgba(59,130,246,0.35));
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    z-index: 1;
+  }
+  .social-card:hover .social-icon {
+    transform: scale(1.08) rotate(-3deg);
+    box-shadow: 0 0 22px var(--brand-glow-strong, rgba(59,130,246,0.5));
+  }
+  .social-icon svg {
+    width: 26px;
+    height: 26px;
+    fill: var(--brand, var(--accent));
+    transition: fill 0.25s ease;
+  }
+  .social-info { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; position: relative; z-index: 1; }
+  .social-name {
+    font-size: 0.98rem; font-weight: 700; color: var(--text);
+    letter-spacing: -0.2px; transition: color 0.25s ease;
+  }
+  .social-card:hover .social-name { color: var(--brand, var(--accent-2)); }
+  .social-desc {
+    font-size: 0.8rem; color: var(--text-dim-2);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .social-arrow {
+    margin-left: auto; color: var(--text-dim-2);
+    font-size: 1.1rem;
+    transition: transform 0.25s ease, color 0.25s ease;
+    position: relative; z-index: 1; flex-shrink: 0;
+  }
+  .social-card:hover .social-arrow {
+    transform: translateX(4px);
+    color: var(--brand, var(--accent-2));
+  }
+
+  .social-card.youtube { --brand: #ff0000; --brand-glow: rgba(255,0,0,0.08); --brand-glow-strong: rgba(255,0,0,0.5); --brand-bg: rgba(255,0,0,0.12); --brand-border: rgba(255,0,0,0.35); }
+  .social-card.vk { --brand: #0077ff; --brand-glow: rgba(0,119,255,0.08); --brand-glow-strong: rgba(0,119,255,0.5); --brand-bg: rgba(0,119,255,0.12); --brand-border: rgba(0,119,255,0.35); }
+  .social-card.telegram { --brand: #229ed9; --brand-glow: rgba(34,158,217,0.08); --brand-glow-strong: rgba(34,158,217,0.5); --brand-bg: rgba(34,158,217,0.12); --brand-border: rgba(34,158,217,0.35); }
+  .social-card.discord { --brand: #5865f2; --brand-glow: rgba(88,101,242,0.08); --brand-glow-strong: rgba(88,101,242,0.5); --brand-bg: rgba(88,101,242,0.12); --brand-border: rgba(88,101,242,0.35); }
+  .social-card.tiktok { --brand: #ff0050; --brand-glow: rgba(255,0,80,0.08); --brand-glow-strong: rgba(255,0,80,0.5); --brand-bg: rgba(255,0,80,0.12); --brand-border: rgba(255,0,80,0.35); }
+  .social-card.github { --brand: #e8edf5; --brand-glow: rgba(232,237,245,0.06); --brand-glow-strong: rgba(232,237,245,0.3); --brand-bg: rgba(232,237,245,0.08); --brand-border: rgba(232,237,245,0.25); }
+
+  /* ИГРЫ */
+  .games-menu {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem; width: 100%; margin-top: 1.5rem;
+  }
+  .game-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.75rem 1.5rem;
+    cursor: pointer; transition: all 0.25s ease;
+    position: relative; overflow: hidden;
+  }
+  .game-card:hover {
+    border-color: var(--accent); background: var(--surface-2);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+  }
+  .game-card .game-icon {
+    width: 56px; height: 56px; border-radius: 14px;
+    background: linear-gradient(135deg, var(--surface-2), var(--bg-2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; margin-bottom: 1rem;
+    border: 1px solid var(--border-2);
+  }
+  .game-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--text); }
+  .game-card p { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem; }
+  .game-card .play-hint {
+    display: inline-block; padding: 0.35rem 0.9rem;
+    border-radius: 8px; background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: var(--accent-2); font-size: 0.72rem;
+    font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  }
+
+  .game-view {
+    display: none; width: 100%; flex-direction: column;
+    align-items: center; gap: 1.5rem; margin-top: 1.5rem;
+  }
+  .game-view.active { display: flex; }
+
+  .game-topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    width: 100%; flex-wrap: wrap; gap: 1rem;
+  }
+  .back-btn {
+    background: var(--surface); border: 1px solid var(--border-2);
+    color: var(--text-dim); padding: 0.5rem 1rem;
+    border-radius: 9px; font-family: inherit;
+    font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .back-btn:hover { background: var(--surface-2); color: var(--text); border-color: var(--accent); }
+  .game-title-bar { font-size: 1.35rem; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+  .game-scores { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .score-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 0.5rem 1.1rem;
+    text-align: center; min-width: 85px;
+  }
+  .score-box .label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim-2); font-weight: 600; }
+  .score-box .value { font-size: 1.3rem; font-weight: 800; color: var(--text); font-family: 'SF Mono', monospace; }
+  .score-box.high .value { color: var(--accent-2); }
+
+  .board-wrap {
+    position: relative; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 1rem; width: 100%; max-width: 480px;
+  }
+  canvas { display: block; width: 100%; height: auto; border-radius: 10px; background: var(--bg); touch-action: none; }
+
+  .game-controls { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+  .game-hint { color: var(--text-dim); font-size: 0.88rem; text-align: center; }
+  .game-hint kbd {
+    background: var(--surface-2); border: 1px solid var(--border-2);
+    border-radius: 5px; padding: 0.1rem 0.45rem;
+    font-family: 'SF Mono', monospace; color: var(--accent-2);
+    font-size: 0.8rem; font-weight: 600;
+  }
+
+  .game-overlay {
+    position: absolute; inset: 1rem;
+    background: rgba(10, 14, 20, 0.94);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    border-radius: 10px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    gap: 1rem; z-index: 5; text-align: center;
+    padding: 1.5rem; border: 1px solid var(--border);
+  }
+  .game-overlay.hidden { display: none; }
+  .game-overlay h2 { font-size: 1.5rem; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+  .game-overlay p { color: var(--text-dim); max-width: 320px; font-size: 0.92rem; }
+
+  .tetris-layout { display: flex; gap: 1.25rem; align-items: flex-start; justify-content: center; flex-wrap: wrap; width: 100%; }
+  .tetris-side { display: flex; flex-direction: column; gap: 0.75rem; min-width: 130px; }
+  .tetris-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; text-align: center; }
+  .tetris-panel .label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim-2); margin-bottom: 0.4rem; font-weight: 600; }
+  .next-canvas { background: var(--bg); border-radius: 8px; width: 100px; height: 100px; display: block; margin: 0 auto; }
+  .tetris-panel .value-big { font-size: 1.5rem; font-weight: 800; color: var(--text); font-family: 'SF Mono', monospace; }
+
+  .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; width: 100%; max-width: 480px; }
+  .mem-card {
+    aspect-ratio: 1; background: var(--surface);
+    border: 1px solid var(--border-2); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; cursor: pointer; transition: all 0.25s ease;
+    user-select: none; color: transparent; position: relative;
+  }
+  .mem-card::after {
+    content: '?'; position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-dim-2); font-size: 1.5rem; font-weight: 800;
+  }
+  .mem-card:hover { border-color: var(--accent); background: var(--surface-2); }
+  .mem-card.flipped { background: rgba(59, 130, 246, 0.1); border-color: var(--accent); color: var(--text); }
+  .mem-card.flipped::after { display: none; }
+  .mem-card.matched { background: rgba(16, 185, 129, 0.1); border-color: var(--green); cursor: default; }
+  .mem-card.matched::after { display: none; }
+
+  .ttt-wrap { display: flex; flex-direction: column; align-items: center; gap: 1.25rem; width: 100%; }
+  .ttt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; width: 100%; max-width: 340px; }
+  .ttt-cell {
+    aspect-ratio: 1; background: var(--surface);
+    border: 1px solid var(--border-2); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.2rem; font-weight: 800;
+    cursor: pointer; transition: all 0.2s ease;
+    user-select: none; font-family: 'SF Mono', monospace;
+  }
+  .ttt-cell:hover { border-color: var(--accent); background: var(--surface-2); }
+  .ttt-cell.x { color: var(--accent-2); border-color: rgba(59,130,246,0.5); }
+  .ttt-cell.o { color: var(--pink); border-color: rgba(236,72,153,0.5); }
+  .ttt-cell.win { background: rgba(16, 185, 129, 0.12); border-color: var(--green); }
+  .ttt-status { font-size: 1.1rem; font-weight: 700; color: var(--text); min-height: 1.6rem; text-align: center; }
+
+  footer {
+    text-align: center; padding: 2.5rem 2rem;
+    color: var(--text-dim-2); font-size: 0.85rem;
+    border-top: 1px solid var(--border); margin-top: auto;
+    position: relative; z-index: 1;
+  }
+
+  @media (max-width: 860px) {
+    .showcase { grid-template-columns: 1fr; gap: 2rem; padding: 2rem 0; }
+    .showcase.reverse .showcase-media,
+    .showcase.reverse .showcase-text { order: unset; }
+  }
+  @media (max-width: 640px) {
+    header { padding: 0.9rem 1rem; }
+    main { padding: 0 1rem 2rem; }
+    .hero { padding: 2.5rem 1rem 2rem; }
+    .btn { width: 100%; }
+    .tab-btn { padding: 0.5rem 1rem; font-size: 0.82rem; }
+    .game-topbar { justify-content: center; text-align: center; }
+    .tetris-side { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+    .stat-value { font-size: 1.3rem; }
+    .top-game-row { grid-template-columns: 20px 24px 1fr auto; }
+    .top-game-bar { display: none; }
+    .socials-grid { grid-template-columns: 1fr 1fr; }
+    .social-desc { display: none; }
+  }
+  @media (max-width: 420px) {
+    .socials-grid { grid-template-columns: 1fr; }
+    .social-desc { display: block; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo" id="homeLogo" title="На главную">
+    <div class="logo-mark">T</div>
+    <div class="logo-text">Тест <span>tools</span></div>
+  </div>
+</header>
+
+<div class="nav-tabs">
+  <button class="tab-btn active" data-tab="home">Главная</button>
+  <button class="tab-btn" data-tab="game">Игры</button>
+</div>
+
+<main>
+
+  <!-- ГЛАВНАЯ -->
+  <div class="tab-content active" id="tab-home">
+
+    <div class="hero">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        Игровая платформа • работает локально
+      </div>
+      <h1>Полноценные игры<br>прямо <span class="grad">в вашем браузере</span></h1>
+      <p>Змейка, Тетрис, Memory и Крестики-нолики — четыре классические игры с современным интерфейсом, рекордами и статистикой. Без установки, без интернета, без рекламы.</p>
+    </div>
+
+    <div class="virtual-window">
+      <div class="window-bar">
+        <div class="window-dots"><span></span><span></span><span></span></div>
+        <div class="window-url" id="windowUrl">https://test-tools.local/</div>
+      </div>
+      <div class="window-content">
+        <div class="greeting" id="greetingText">Привет, <span>гость</span>!</div>
+        <div class="desc" id="descText">Это виртуальное окно браузера. Здесь собрана живая статистика игровой платформы.</div>
+
+        <!-- СТАТИСТИКА -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">👁️</div>
+            <div class="stat-value" id="statVisits">1</div>
+            <div class="stat-label">посещений</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🎮</div>
+            <div class="stat-value" id="statPlays">0</div>
+            <div class="stat-label">игр запущено</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-value" id="statTopGame">—</div>
+            <div class="stat-label">популярная игра</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-value" id="statTime">0с</div>
+            <div class="stat-label">в сети</div>
+          </div>
+        </div>
+
+        <!-- ТОП ИГР -->
+        <div class="top-games">
+          <div class="top-games-title">🔥 Топ игр по интересу</div>
+          <div class="top-games-list" id="topGamesList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ЗМЕЙКА -->
+    <div class="showcase">
+      <div class="showcase-media">
+        <canvas class="preview-canvas" id="previewSnake" width="500" height="312"></canvas>
+        <div class="preview-badge">🐍 Neon Snake</div>
+        <div class="preview-stats">Счёт: <b>14</b> • Рекорд: <b>27</b></div>
+      </div>
+      <div class="showcase-text">
+        <h2>Улучшенная змейка</h2>
+        <p>Следите за змейкой как никогда раньше! Плавное управление стрелками или свайпами, <span class="accent-text">ускорение с каждым съеденным шариком</span> и сохранение рекорда в браузере. Каждое яблоко — новый уровень скорости и новые эмоции. Эффективность без компромиссов!</p>
+      </div>
+    </div>
+
+    <!-- ТЕТРИС -->
+    <div class="showcase reverse">
+      <div class="showcase-media">
+        <canvas class="preview-canvas" id="previewTetris" width="500" height="312"></canvas>
+        <div class="preview-badge">🧱 Neon Tetris</div>
+        <div class="preview-stats">Уровень: <b>3</b> • Линий: <b>12</b></div>
+      </div>
+      <div class="showcase-text">
+        <h2>Настоящий тетрис</h2>
+        <p>Все семь классических фигур, поворот с <span class="accent-text">wall-kick</span>, призрак падения и предпросмотр следующей фигуры. Собирайте линии, повышайте уровень — и скорость растёт. Ghost-фигура покажет, куда упадёт блок, а рекорд сохранится даже после перезагрузки страницы.</p>
+      </div>
+    </div>
+
+    <!-- MEMORY -->
+    <div class="showcase">
+      <div class="showcase-media">
+        <canvas class="preview-canvas" id="previewMemory" width="500" height="312"></canvas>
+        <div class="preview-badge">🧠 Memory</div>
+        <div class="preview-stats">Ходы: <b>8</b> • Пар: <b>3/8</b></div>
+      </div>
+      <div class="showcase-text">
+        <h2>Тренировка памяти</h2>
+        <p>Шестнадцать карточек с неоновыми символами. Открывайте по две и находите пары. Чем меньше ходов — тем <span class="accent-text">лучше рекорд</span>. Идеально для короткой паузы: одна партия занимает меньше минуты, а внимание и память тренирует по-настоящему.</p>
+      </div>
+    </div>
+
+    <!-- КРЕСТИКИ-НОЛИКИ -->
+    <div class="showcase reverse">
+      <div class="showcase-media">
+        <canvas class="preview-canvas" id="previewTTT" width="500" height="312"></canvas>
+        <div class="preview-badge">⭕ Крестики-нолики</div>
+        <div class="preview-stats">Победы: <b>5</b> • Поражения: <b>2</b></div>
+      </div>
+      <div class="showcase-text">
+        <h2>Сразись с ИИ</h2>
+        <p>Классические крестики-нолики против умного соперника. ИИ <span class="accent-text">сначала пытается победить, потом блокирует, потом занимает центр</span> и только затем ходит случайно. Ты играешь за X, компьютер — за O. Победы и поражения считаются и сохраняются.</p>
+      </div>
+    </div>
+
+    <!-- СОЦСЕТИ -->
+    <div class="features-header">
+      <h2>Наши соцсети</h2>
+      <p>Подписывайтесь, чтобы первыми узнавать об обновлениях и новых играх.</p>
+    </div>
+
+    <div class="socials-grid">
+
+      <a class="social-card youtube" href="https://youtube.com" target="_blank" rel="noopener">
+        <div class="social-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+        </div>
+        <div class="social-info">
+          <div class="social-name">YouTube</div>
+          <div class="social-desc">Видео и обзоры</div>
+        </div>
+        <div class="social-arrow">→</div>
+      </a>
+
+      <a class="social-card vk" href="https://vk.com" target="_blank" rel="noopener">
+        <div class="social-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.785 16.241s.288-.032.436-.194c.136-.148.132-.427.132-.427s-.02-1.304.576-1.496c.587-.189 1.34 1.258 2.14 1.815.605.42 1.065.328 1.065.328l2.14-.03s1.12-.07.588-.949c-.043-.072-.31-.66-1.597-1.87-1.346-1.265-1.166-1.06.456-3.25.986-1.332 1.38-2.146 1.256-2.494-.118-.33-.844-.243-.844-.243l-2.409.015s-.178-.025-.31.055c-.13.078-.213.26-.213.26s-.382 1.03-.892 1.906c-1.075 1.848-1.503 1.945-1.678 1.83-.413-.27-.31-1.084-.31-1.663 0-1.815.271-2.572-.527-2.768-.265-.065-.459-.108-1.134-.115-.865-.009-1.597.003-2.012.208-.276.137-.489.442-.359.46.16.021.523.099.716.365.248.345.24 1.12.24 1.12s.142 2.136-.332 2.401c-.325.182-.77-.19-1.727-1.892-.657-1.136-1.153-2.393-1.153-2.393s-.096-.235-.268-.362c-.208-.153-.499-.201-.499-.201l-2.286.015s-.343.01-.469.159c-.112.132-.009.405-.009.405s1.79 4.188 3.816 6.302c1.858 1.94 3.968 1.813 3.968 1.813h.957z"/>
+          </svg>
+        </div>
+        <div class="social-info">
+          <div class="social-name">ВКонтакте</div>
+          <div class="social-desc">Новости и посты</div>
+        </div>
+        <div class="social-arrow">→</div>
+      </a>
+
+      <a class="social-card telegram" href="https://t.me" target="_blank" rel="noopener">
+        <div class="social-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.26-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.015 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+          </svg>
+        </div>
+        <div class="social-info">
+          <div class="social-name">Telegram</div>
+          <div class="social-desc">Канал и чат</div>
+        </div>
+        <div class="social-arrow">→</div>
+      </a>
+
+      <a class="social-card discord" href="https://discord.com" target="_blank" rel="noopener">
+        <div class="social-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20.317 4.3698a19.7913 19.7913 0 0 0-4.8851-1.5152.0741.0741 0 0 0-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 0 0-.0785-.037 19.7363 19.7363 0 0 0-4.8852 1.515.0699.0699 0 0 0-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 0 0 .0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 0 0 .0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 0 0-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 0 1-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 0 1 .0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 0 1 .0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 0 1-.0066.1276 12.2986 12.2986 0 0 1-1.873.8914.0766.0766 0 0 0-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 0 0 .0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 0 0 .0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 0 0-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+          </svg>
+        </div>
+        <div class="social-info">
+          <div class="social-name">Discord</div>
+          <div class="social-desc">Сообщество</div>
+        </div>
+        <div class="social-arrow">→</div>
+      </a>
+
+      <a class="social-card tiktok" href="https://tiktok.com" target="_blank" rel="noopener">
+        <div class="social-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+          </svg>
+        </div>
+        <div class="social-info">
+          <div class="social-name">TikTok</div>
+          <div class="social-desc">Короткие видео</div>
+        </div>
+        <div class="social-arrow">→</div>
+      </a>
+
+      <a class="social-card github" href="https://github.com" target="_blank" rel="noopener">
+        <div class="social-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+          </svg>
+        </div>
+        <div class="social-info">
+          <div class="social-name">GitHub</div>
+          <div class="social-desc">Исходный код</div>
+        </div>
+        <div class="social-arrow">→</div>
+      </a>
+
+    </div>
+
+  </div>
+
+  <!-- ИГРЫ -->
+  <div class="tab-content" id="tab-game">
+
+    <div class="features-header" style="margin-top:1.5rem;">
+      <h2>Игровой раздел</h2>
+      <p>Выберите игру — все они работают прямо в браузере.</p>
+    </div>
+
+    <div class="games-menu" id="gamesMenu">
+      <div class="game-card" data-game="snake"><div class="game-icon">🐍</div><h3>Neon Snake</h3><p>Классическая змейка с ускорением и рекордами.</p><span class="play-hint">▶ играть</span></div>
+      <div class="game-card" data-game="tetris"><div class="game-icon">🧱</div><h3>Neon Tetris</h3><p>Собирай линии из падающих фигур. Скорость растёт с уровнем.</p><span class="play-hint">▶ играть</span></div>
+      <div class="game-card" data-game="memory"><div class="game-icon">🧠</div><h3>Memory</h3><p>Найди все пары символов за минимальное число ходов.</p><span class="play-hint">▶ играть</span></div>
+      <div class="game-card" data-game="ttt"><div class="game-icon">⭕</div><h3>Крестики-нолики</h3><p>Сразись с ИИ. Ты — X, компьютер — O.</p><span class="play-hint">▶ играть</span></div>
+    </div>
+
+    <!-- ЗМЕЙКА -->
+    <div class="game-view" id="view-snake">
+      <div class="game-topbar">
+        <button class="back-btn" data-back>← к играм</button>
+        <div class="game-title-bar">🐍 Neon Snake</div>
+        <div class="game-scores">
+          <div class="score-box"><div class="label">Счёт</div><div class="value" id="snakeScore">0</div></div>
+          <div class="score-box high"><div class="label">Рекорд</div><div class="value" id="snakeBest">0</div></div>
+        </div>
+      </div>
+      <div class="board-wrap">
+        <canvas id="snakeCanvas" width="440" height="440"></canvas>
+        <div class="game-overlay" id="snakeOverlay">
+          <h2 id="snakeOverlayTitle">ГОТОВ К ИГРЕ?</h2>
+          <p id="snakeOverlayText">Управляй змейкой стрелками или свайпами.</p>
+          <button class="btn" id="snakeStart">▶ Начать игру</button>
+        </div>
+      </div>
+      <div class="game-controls">
+        <button class="btn btn-secondary" id="snakePause">⏸ Пауза</button>
+        <button class="btn btn-secondary" id="snakeRestart">↻ Заново</button>
+      </div>
+      <div class="game-hint">Управление: <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> или <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> • <kbd>Space</kbd> — пауза</div>
+    </div>
+
+    <!-- ТЕТРИС -->
+    <div class="game-view" id="view-tetris">
+      <div class="game-topbar">
+        <button class="back-btn" data-back>← к играм</button>
+        <div class="game-title-bar">🧱 Neon Tetris</div>
+        <div class="game-scores">
+          <div class="score-box"><div class="label">Счёт</div><div class="value" id="tetrisScore">0</div></div>
+          <div class="score-box high"><div class="label">Рекорд</div><div class="value" id="tetrisBest">0</div></div>
+        </div>
+      </div>
+      <div class="tetris-layout">
+        <div class="board-wrap" style="max-width: 340px;">
+          <canvas id="tetrisCanvas" width="300" height="600"></canvas>
+          <div class="game-overlay hidden" id="tetrisOverlay">
+            <h2 id="tetrisOverlayTitle">ГОТОВ?</h2>
+            <p id="tetrisOverlayText">Собирай линии, не дай стакану заполниться доверху.</p>
+            <button class="btn" id="tetrisStart">▶ Начать</button>
+          </div>
+        </div>
+        <div class="tetris-side">
+          <div class="tetris-panel"><div class="label">Уровень</div><div class="value-big" id="tetrisLevel">1</div></div>
+          <div class="tetris-panel"><div class="label">Линии</div><div class="value-big" id="tetrisLines">0</div></div>
+          <div class="tetris-panel"><div class="label">Далее</div><canvas id="nextCanvas" class="next-canvas" width="100" height="100"></canvas></div>
+        </div>
+      </div>
+      <div class="game-controls">
+        <button class="btn btn-secondary" id="tetrisPause">⏸ Пауза</button>
+        <button class="btn btn-secondary" id="tetrisRestart">↻ Заново</button>
+      </div>
+      <div class="game-hint">Управление: <kbd>←</kbd> <kbd>→</kbd> — движение • <kbd>↑</kbd> — поворот • <kbd>↓</kbd> — ускорить • <kbd>Space</kbd> — сброс • <kbd>P</kbd> — пауза</div>
+    </div>
+
+    <!-- MEMORY -->
+    <div class="game-view" id="view-memory">
+      <div class="game-topbar">
+        <button class="back-btn" data-back>← к играм</button>
+        <div class="game-title-bar">🧠 Memory</div>
+        <div class="game-scores">
+          <div class="score-box"><div class="label">Ходы</div><div class="value" id="memMoves">0</div></div>
+          <div class="score-box high"><div class="label">Рекорд</div><div class="value" id="memBest">-</div></div>
+        </div>
+      </div>
+      <div class="memory-grid" id="memoryGrid"></div>
+      <div class="game-controls"><button class="btn btn-secondary" id="memRestart">↻ Новая игра</button></div>
+      <div class="game-hint">Открывай карточки и находи пары одинаковых символов.</div>
+    </div>
+
+    <!-- КРЕСТИКИ-НОЛИКИ -->
+    <div class="game-view" id="view-ttt">
+      <div class="game-topbar">
+        <button class="back-btn" data-back>← к играм</button>
+        <div class="game-title-bar">⭕ Крестики-нолики</div>
+        <div class="game-scores">
+          <div class="score-box"><div class="label">Победы</div><div class="value" id="tttWins">0</div></div>
+          <div class="score-box high"><div class="label">Поражения</div><div class="value" id="tttLosses">0</div></div>
+        </div>
+      </div>
+      <div class="ttt-wrap">
+        <div class="ttt-status" id="tttStatus">Твой ход: X</div>
+        <div class="ttt-grid" id="tttGrid"></div>
+        <div class="game-controls"><button class="btn btn-secondary" id="tttRestart">↻ Новая игра</button></div>
+      </div>
+      <div class="game-hint">Ты играешь за <span style="color:#60a5fa;font-weight:700;">X</span>, компьютер — за <span style="color:#ec4899;font-weight:700;">O</span>.</div>
+    </div>
+
+  </div>
+
+</main>
+
+<footer>Тест tools • работает локально в вашем браузере</footer>
+
+<script>
+/* ============================================================
+   ПРЕВЬЮ ИГР НА ГЛАВНОЙ
+   ============================================================ */
+function drawPreviews() {
+  // ---- ЗМЕЙКА ----
+  (function() {
+    const c = document.getElementById('previewSnake');
+    if (!c) return;
+    const x = c.getContext('2d');
+    const CELL = 16, COLS = c.width / CELL, ROWS = c.height / CELL;
+
+    x.fillStyle = '#0a0e14';
+    x.fillRect(0,0,c.width,c.height);
+
+    x.strokeStyle = 'rgba(35, 44, 61, 0.7)';
+    x.lineWidth = 1;
+    for (let i=0;i<=COLS;i++){ x.beginPath(); x.moveTo(i*CELL,0); x.lineTo(i*CELL,c.height); x.stroke(); }
+    for (let j=0;j<=ROWS;j++){ x.beginPath(); x.moveTo(0,j*CELL); x.lineTo(c.width,j*CELL); x.stroke(); }
+
+    const snake = [
+      {x:14,y:10},{x:13,y:10},{x:12,y:10},{x:11,y:10},{x:10,y:10},{x:10,y:9},{x:10,y:8},
+      {x:11,y:8},{x:12,y:8},{x:13,y:8},{x:14,y:8},{x:14,y:7},{x:14,y:6}
+    ];
+
+    x.save();
+    x.shadowColor = '#10b981'; x.shadowBlur = 16;
+    x.fillStyle = '#10b981';
+    x.beginPath(); x.arc(18*CELL+CELL/2, 5*CELL+CELL/2, CELL/2-3, 0, Math.PI*2); x.fill();
+    x.restore();
+
+    snake.forEach((seg,i)=>{
+      const isHead = i===0;
+      x.save();
+      if (isHead) {
+        x.shadowColor = '#3b82f6'; x.shadowBlur = 14;
+        x.fillStyle = '#60a5fa';
+      } else {
+        const alpha = 1 - (i/snake.length)*0.5;
+        x.fillStyle = `rgba(59, 130, 246, ${alpha})`;
+      }
+      const px = seg.x*CELL+2, py = seg.y*CELL+2, w = CELL-4, h = CELL-4, r = 4;
+      x.beginPath();
+      x.moveTo(px+r,py);
+      x.arcTo(px+w,py,px+w,py+h,r);
+      x.arcTo(px+w,py+h,px,py+h,r);
+      x.arcTo(px,py+h,px,py,r);
+      x.arcTo(px,py,px+w,py,r);
+      x.closePath();
+      x.fill();
+      x.restore();
+    });
+  })();
+
+  // ---- ТЕТРИС ----
+  (function() {
+    const c = document.getElementById('previewTetris');
+    if (!c) return;
+    const x = c.getContext('2d');
+    const COLS = 10, ROWS = 20;
+    const BLOCK = 22;
+    const offX = (c.width - COLS * BLOCK) / 2;
+    const offY = 8;
+
+    x.fillStyle = '#0a0e14';
+    x.fillRect(0,0,c.width,c.height);
+
+    x.fillStyle = '#0f141c';
+    x.fillRect(offX, offY, COLS*BLOCK, ROWS*BLOCK);
+
+    x.strokeStyle = 'rgba(35, 44, 61, 0.7)';
+    x.lineWidth = 1;
+    for (let i=0;i<=COLS;i++){ x.beginPath(); x.moveTo(offX+i*BLOCK, offY); x.lineTo(offX+i*BLOCK, offY+ROWS*BLOCK); x.stroke(); }
+    for (let j=0;j<=ROWS;j++){ x.beginPath(); x.moveTo(offX, offY+j*BLOCK); x.lineTo(offX+COLS*BLOCK, offY+j*BLOCK); x.stroke(); }
+
+    const stack = [
+      [{c:'#60a5fa'},{c:'#60a5fa'},null,null,null,null,null,{c:'#a78bfa'},{c:'#a78bfa'},{c:'#a78bfa'}],
+      [{c:'#60a5fa'},{c:'#60a5fa'},null,null,null,null,null,{c:'#a78bfa'},null,null],
+      [{c:'#ec4899'},{c:'#ec4899'},{c:'#ec4899'},null,null,{c:'#10b981'},{c:'#10b981'},null,null,null],
+      [{c:'#ec4899'},null,null,null,null,null,{c:'#10b981'},{c:'#10b981'},null,null],
+      [{c:'#fbbf24'},{c:'#fbbf24'},null,null,null,null,null,null,null,null]
+    ];
+    stack.forEach((row,ri)=>{
+      row.forEach((cell,ci)=>{
+        if (!cell) return;
+        const bx = offX + ci*BLOCK;
+        const by = offY + (ROWS - 1 - ri)*BLOCK;
+        x.save();
+        x.shadowColor = cell.c; x.shadowBlur = 8;
+        x.fillStyle = cell.c;
+        x.fillRect(bx+1, by+1, BLOCK-2, BLOCK-2);
+        x.restore();
+        x.fillStyle = 'rgba(255,255,255,0.2)';
+        x.fillRect(bx+2, by+2, BLOCK-4, 3);
+      });
+    });
+
+    const PIECE = { color: '#a78bfa', cells: [[0,1,0],[1,1,1]] };
+    const pieceX = 3, pieceY = 6;
+    PIECE.cells.forEach((row,ry)=>{
+      row.forEach((v,rx)=>{
+        if (!v) return;
+        const bx = offX + (pieceX+rx)*BLOCK;
+        const by = offY + (pieceY+ry)*BLOCK;
+        x.save();
+        x.shadowColor = PIECE.color; x.shadowBlur = 12;
+        x.fillStyle = PIECE.color;
+        x.fillRect(bx+1, by+1, BLOCK-2, BLOCK-2);
+        x.restore();
+        x.fillStyle = 'rgba(255,255,255,0.2)';
+        x.fillRect(bx+2, by+2, BLOCK-4, 3);
+      });
+    });
+
+    x.save();
+    x.globalAlpha = 0.15;
+    PIECE.cells.forEach((row,ry)=>{
+      row.forEach((v,rx)=>{
+        if (!v) return;
+        const bx = offX + (pieceX+rx)*BLOCK;
+        const by = offY + (ROWS-2+ry)*BLOCK;
+        x.fillStyle = PIECE.color;
+        x.fillRect(bx+2, by+2, BLOCK-4, BLOCK-4);
+      });
+    });
+    x.restore();
+  })();
+
+  // ---- MEMORY ----
+  (function() {
+    const c = document.getElementById('previewMemory');
+    if (!c) return;
+    const x = c.getContext('2d');
+    const COLS = 4, ROWS = 4;
+    const PAD = 20;
+    const GAP = 10;
+    const CELL = Math.min((c.width - PAD*2 - GAP*3) / 4, (c.height - PAD*2 - GAP*3) / 4);
+    const totalW = CELL*4 + GAP*3;
+    const totalH = CELL*4 + GAP*3;
+    const offX = (c.width - totalW) / 2;
+    const offY = (c.height - totalH) / 2;
+
+    x.fillStyle = '#0a0e14';
+    x.fillRect(0,0,c.width,c.height);
+
+    const GRID = [
+      ['⚡','💎','🔥','🌟'],
+      ['🎯','🎨','🚀','👾'],
+      ['💎','⚡','🌟','🔥'],
+      ['🎨','🎯','👾','🚀']
+    ];
+    const MATCH_PAIRS = [['0-1','2-0'],['1-0','3-1']];
+    const MATCHED_SET = new Set();
+    MATCH_PAIRS.forEach(([a,b])=>{ MATCHED_SET.add(a); MATCHED_SET.add(b); });
+
+    for (let r=0;r<ROWS;r++) {
+      for (let col=0;col<COLS;col++) {
+        const bx = offX + col*(CELL + GAP);
+        const by = offY + r*(CELL + GAP);
+        const key = r+'-'+col;
+        const isMatched = MATCHED_SET.has(key);
+
+        x.fillStyle = isMatched ? 'rgba(16, 185, 129, 0.12)' : '#131922';
+        x.strokeStyle = isMatched ? '#10b981' : '#2e394d';
+        x.lineWidth = 1.5;
+
+        const radius = 10;
+        x.beginPath();
+        x.moveTo(bx+radius, by);
+        x.arcTo(bx+CELL, by, bx+CELL, by+CELL, radius);
+        x.arcTo(bx+CELL, by+CELL, bx, by+CELL, radius);
+        x.arcTo(bx, by+CELL, bx, by, radius);
+        x.arcTo(bx, by, bx+CELL, by, radius);
+        x.closePath();
+        x.fill();
+        x.stroke();
+
+        x.textAlign = 'center';
+        x.textBaseline = 'middle';
+        if (isMatched) {
+          x.font = '28px system-ui, "Segoe UI Emoji"';
+          x.fillStyle = '#e8edf5';
+          x.fillText(GRID[r][col], bx + CELL/2, by + CELL/2 + 2);
+        } else {
+          x.font = 'bold 22px "SF Mono", monospace';
+          x.fillStyle = '#6c7a94';
+          x.fillText('?', bx + CELL/2, by + CELL/2 + 2);
+        }
+      }
+    }
+  })();
+
+  // ---- КРЕСТИКИ-НОЛИКИ ----
+  (function() {
+    const c = document.getElementById('previewTTT');
+    if (!c) return;
+    const x = c.getContext('2d');
+    const COLS = 3, ROWS = 3;
+    const PAD = 30;
+    const GAP = 10;
+    const CELL = Math.min((c.width - PAD*2 - GAP*2) / 3, (c.height - PAD*2 - GAP*2) / 3);
+    const totalW = CELL*3 + GAP*2;
+    const totalH = CELL*3 + GAP*2;
+    const offX = (c.width - totalW) / 2;
+    const offY = (c.height - totalH) / 2;
+
+    x.fillStyle = '#0a0e14';
+    x.fillRect(0,0,c.width,c.height);
+
+    const BOARD = [['X','O','X'],['X','O','O'],['X','X','O']];
+    const WIN = [[0,0],[1,0],[2,0]];
+
+    for (let r=0;r<ROWS;r++) {
+      for (let col=0;col<COLS;col++) {
+        const bx = offX + col*(CELL + GAP);
+        const by = offY + r*(CELL + GAP);
+        const val = BOARD[r][col];
+        const win = WIN.some(([wr,wc])=>wr===r&&wc===col);
+
+        x.fillStyle = win ? 'rgba(16, 185, 129, 0.12)' : '#131922';
+        x.strokeStyle = win ? '#10b981' : '#2e394d';
+        x.lineWidth = win ? 2 : 1.5;
+
+        const radius = 12;
+        x.beginPath();
+        x.moveTo(bx+radius, by);
+        x.arcTo(bx+CELL, by, bx+CELL, by+CELL, radius);
+        x.arcTo(bx+CELL, by+CELL, bx, by+CELL, radius);
+        x.arcTo(bx, by+CELL, bx, by, radius);
+        x.arcTo(bx, by, bx+CELL, by, radius);
+        x.closePath();
+        x.fill();
+        x.stroke();
+
+        x.textAlign = 'center';
+        x.textBaseline = 'middle';
+        x.font = 'bold 48px "SF Mono", monospace';
+        if (val === 'X') {
+          x.save();
+          x.shadowColor = '#60a5fa'; x.shadowBlur = 16;
+          x.fillStyle = '#60a5fa';
+          x.fillText('X', bx + CELL/2, by + CELL/2 + 2);
+          x.restore();
+        } else {
+          x.save();
+          x.shadowColor = '#ec4899'; x.shadowBlur = 16;
+          x.fillStyle = '#ec4899';
+          x.fillText('O', bx + CELL/2, by + CELL/2 + 2);
+          x.restore();
+        }
+      }
+    }
+  })();
+}
+
+/* ============================================================
+   СТАТИСТИКА
+   ============================================================ */
+const Stats = (function() {
+  const KEYS = {
+    visits: 'tt_stats_visits',
+    plays: 'tt_stats_plays',
+    games: 'tt_stats_games',
+    firstVisit: 'tt_stats_first_visit'
+  };
+
+  const GAME_META = {
+    snake:  { name: 'Neon Snake',      icon: '🐍' },
+    tetris: { name: 'Neon Tetris',     icon: '🧱' },
+    memory: { name: 'Memory',          icon: '🧠' },
+    ttt:    { name: 'Крестики-нолики', icon: '⭕' }
+  };
+
+  function trackVisit() {
+    let visits = parseInt(localStorage.getItem(KEYS.visits) || '0', 10);
+    if (!sessionStorage.getItem('tt_session_active')) {
+      visits++;
+      localStorage.setItem(KEYS.visits, String(visits));
+      sessionStorage.setItem('tt_session_active', '1');
+    }
+    if (!localStorage.getItem(KEYS.firstVisit)) {
+      localStorage.setItem(KEYS.firstVisit, String(Date.now()));
+    }
+    return visits;
+  }
+
+  function trackGame(gameKey) {
+    if (!GAME_META[gameKey]) return;
+
+    let plays = parseInt(localStorage.getItem(KEYS.plays) || '0', 10);
+    plays++;
+    localStorage.setItem(KEYS.plays, String(plays));
+
+    let games = {};
+    try { games = JSON.parse(localStorage.getItem(KEYS.games) || '{}'); } catch(e) { games = {}; }
+    games[gameKey] = (games[gameKey] || 0) + 1;
+    localStorage.setItem(KEYS.games, JSON.stringify(games));
+
+    refreshUI();
+  }
+
+  function getStats() {
+    const visits = parseInt(localStorage.getItem(KEYS.visits) || '0', 10);
+    const plays = parseInt(localStorage.getItem(KEYS.plays) || '0', 10);
+    let games = {};
+    try { games = JSON.parse(localStorage.getItem(KEYS.games) || '{}'); } catch(e) { games = {}; }
+
+    const sorted = Object.entries(games)
+      .map(([key, count]) => ({ key, count, ...(GAME_META[key] || { name: key, icon: '🎮' }) }))
+      .sort((a, b) => b.count - a.count);
+
+    return { visits, plays, games, sorted, topGame: sorted[0] || null };
+  }
+
+  function refreshUI() {
+    const s = getStats();
+
+    const elVisits = document.getElementById('statVisits');
+    const elPlays = document.getElementById('statPlays');
+    const elTopGame = document.getElementById('statTopGame');
+    const elTopGames = document.getElementById('topGamesList');
+
+    if (elVisits) elVisits.textContent = s.visits;
+    if (elPlays) elPlays.textContent = s.plays;
+    if (elTopGame) {
+      elTopGame.textContent = s.topGame ? `${s.topGame.icon} ${s.topGame.name}` : '—';
+      elTopGame.style.fontSize = s.topGame ? '1rem' : '1.6rem';
+    }
+
+    if (elTopGames) {
+      const allKeys = Object.keys(GAME_META);
+      const rows = allKeys.map(k => {
+        const count = s.games[k] || 0;
+        return { key: k, count, ...GAME_META[k] };
+      }).sort((a, b) => b.count - a.count);
+
+      const maxC = Math.max(1, ...rows.map(r => r.count));
+      elTopGames.innerHTML = rows.map((r, i) => {
+        const percent = r.count > 0 ? (r.count / maxC) * 100 : 0;
+        return `
+          <div class="top-game-row">
+            <div class="top-game-rank">${i + 1}</div>
+            <div class="top-game-icon">${r.icon}</div>
+            <div class="top-game-name">${r.name}</div>
+            <div class="top-game-bar">
+              <div class="top-game-bar-fill" style="width: ${percent}%"></div>
+            </div>
+            <div class="top-game-count">${r.count}</div>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  function init() {
+    trackVisit();
+    refreshUI();
+  }
+
+  return { init, trackGame, refreshUI, getStats };
+})();
+
+/* ============================================================
+   ИГРА: SNAKE
+   ============================================================ */
+const Snake = (function() {
+  const canvas = document.getElementById('snakeCanvas');
+  const ctx = canvas.getContext('2d');
+  const scoreEl = document.getElementById('snakeScore');
+  const bestEl = document.getElementById('snakeBest');
+  const overlay = document.getElementById('snakeOverlay');
+  const overlayTitle = document.getElementById('snakeOverlayTitle');
+  const overlayText = document.getElementById('snakeOverlayText');
+  const startBtn = document.getElementById('snakeStart');
+  const pauseBtn = document.getElementById('snakePause');
+  const restartBtn = document.getElementById('snakeRestart');
+
+  const GRID = 20, CELL = canvas.width / GRID;
+  let snake = [], dir = {x:1,y:0}, nextDir = {x:1,y:0};
+  let food = {x:5,y:5}, score = 0, speed = 130;
+  let best = parseInt(localStorage.getItem('neonSnakeBest') || '0', 10);
+  let lastStep = 0, animId = null, isRunning = false, isPaused = false;
+
+  bestEl.textContent = best;
+
+  function reset() {
+    snake = [{x:9,y:10},{x:8,y:10},{x:7,y:10}];
+    dir = {x:1,y:0}; nextDir = {x:1,y:0};
+    score = 0; speed = 130;
+    scoreEl.textContent = '0';
+    placeFood();
+  }
+  function placeFood() {
+    let ok = false, tries = 0;
+    while (!ok && tries < 500) {
+      const fx = Math.floor(Math.random()*GRID), fy = Math.floor(Math.random()*GRID);
+      if (!snake.some(s => s.x === fx && s.y === fy)) { food = {x:fx,y:fy}; ok = true; }
+      tries++;
+    }
+  }
+  function roundRect(c,x,y,w,h,r){
+    c.beginPath();
+    c.moveTo(x+r,y);
+    c.arcTo(x+w,y,x+w,y+h,r);
+    c.arcTo(x+w,y+h,x,y+h,r);
+    c.arcTo(x,y+h,x,y,r);
+    c.arcTo(x,y,x+w,y,r);
+    c.closePath();
+  }
+  function draw() {
+    ctx.fillStyle = '#0a0e14';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.strokeStyle = 'rgba(35, 44, 61, 0.5)';
+    ctx.lineWidth = 1;
+    for (let i=0;i<=GRID;i++){
+      ctx.beginPath(); ctx.moveTo(i*CELL,0); ctx.lineTo(i*CELL,canvas.height); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,i*CELL); ctx.lineTo(canvas.width,i*CELL); ctx.stroke();
+    }
+    const fx = food.x*CELL+CELL/2, fy = food.y*CELL+CELL/2;
+    ctx.save();
+    ctx.shadowColor = '#10b981'; ctx.shadowBlur = 18;
+    ctx.fillStyle = '#10b981';
+    ctx.beginPath(); ctx.arc(fx,fy,CELL/2-3,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+    snake.forEach((seg,i)=>{
+      const x = seg.x*CELL, y = seg.y*CELL, isHead = i===0;
+      ctx.save();
+      if (isHead) {
+        ctx.shadowColor = '#3b82f6'; ctx.shadowBlur = 15;
+        ctx.fillStyle = '#60a5fa';
+      } else {
+        const t = i/snake.length;
+        const alpha = 1 - t*0.5;
+        ctx.fillStyle = `rgba(59, 130, 246, ${alpha})`;
+      }
+      roundRect(ctx,x+2,y+2,CELL-4,CELL-4,5); ctx.fill();
+      ctx.restore();
+    });
+  }
+  function step() {
+    dir = { ...nextDir };
+    const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+    if (head.x<0 || head.x>=GRID || head.y<0 || head.y>=GRID) return gameOver();
+    if (snake.some((s,i)=> i>0 && s.x===head.x && s.y===head.y)) return gameOver();
+    snake.unshift(head);
+    if (head.x===food.x && head.y===food.y) {
+      score++; scoreEl.textContent = score;
+      if (speed > 60) speed -= 3;
+      placeFood();
+    } else snake.pop();
+  }
+  function loop(ts) {
+    if (!isRunning) return;
+    if (!isPaused && ts - lastStep > speed) { step(); lastStep = ts; }
+    draw();
+    animId = requestAnimationFrame(loop);
+  }
+  function start() {
+    reset();
+    isRunning = true; isPaused = false;
+    overlay.classList.add('hidden');
+    lastStep = performance.now();
+    cancelAnimationFrame(animId);
+    animId = requestAnimationFrame(loop);
+    pauseBtn.textContent = '⏸ Пауза';
+  }
+  function pause() {
+    if (!isRunning) return;
+    isPaused = !isPaused;
+    pauseBtn.textContent = isPaused ? '▶ Продолжить' : '⏸ Пауза';
+    if (isPaused) {
+      overlay.classList.remove('hidden');
+      overlayTitle.textContent = 'ПАУЗА';
+      overlayText.textContent = 'Игра приостановлена.';
+      startBtn.textContent = '▶ Продолжить';
+    } else {
+      overlay.classList.add('hidden');
+      lastStep = performance.now();
+    }
+  }
+  function gameOver() {
+    isRunning = false;
+    cancelAnimationFrame(animId);
+    if (score > best) {
+      best = score;
+      localStorage.setItem('neonSnakeBest', String(best));
+      bestEl.textContent = best;
+    }
+    overlay.classList.remove('hidden');
+    overlayTitle.textContent = 'ИГРА ОКОНЧЕНА';
+    overlayText.textContent = `Твой счёт: ${score}. ${score >= best && score > 0 ? '🏆 Новый рекорд!' : 'Попробуй ещё раз!'}`;
+    startBtn.textContent = '↻ Играть снова';
+  }
+  function setDir(x,y) {
+    if (dir.x === -x && dir.y === -y) return;
+    if (nextDir.x === -x && nextDir.y === -y) return;
+    nextDir = {x,y};
+  }
+
+  document.addEventListener('keydown', e => {
+    if (!document.getElementById('view-snake').classList.contains('active')) return;
+    const k = e.key.toLowerCase();
+    if (['arrowup','arrowdown','arrowleft','arrowright','w','a','s','d',' '].includes(k)) e.preventDefault();
+    if (k==='arrowup'||k==='w') setDir(0,-1);
+    else if (k==='arrowdown'||k==='s') setDir(0,1);
+    else if (k==='arrowleft'||k==='a') setDir(-1,0);
+    else if (k==='arrowright'||k==='d') setDir(1,0);
+    else if (k===' ') { if (isRunning) pause(); else start(); }
+  });
+
+  let touchStart = null;
+  canvas.addEventListener('touchstart', e => { touchStart = {x:e.touches[0].clientX, y:e.touches[0].clientY}; }, {passive:true});
+  canvas.addEventListener('touchmove', e => {
+    if (!touchStart) return;
+    e.preventDefault();
+    const dx = e.touches[0].clientX - touchStart.x;
+    const dy = e.touches[0].clientY - touchStart.y;
+    if (Math.abs(dx) < 20 && Math.abs(dy) < 20) return;
+    if (Math.abs(dx) > Math.abs(dy)) setDir(dx>0?1:-1, 0);
+    else setDir(0, dy>0?1:-1);
+    touchStart = null;
+  }, {passive:false});
+  canvas.addEventListener('touchend', () => { touchStart = null; }, {passive:true});
+
+  startBtn.addEventListener('click', () => { if (isPaused) pause(); else start(); });
+  pauseBtn.addEventListener('click', pause);
+  restartBtn.addEventListener('click', start);
+
+  return {
+    prepare() {
+      isRunning = false;
+      isPaused = false;
+      cancelAnimationFrame(animId);
+      reset();
+      draw();
+      overlay.classList.remove('hidden');
+      overlayTitle.textContent = 'ГОТОВ К ИГРЕ?';
+      overlayText.textContent = 'Управляй змейкой стрелками или свайпами.';
+      startBtn.textContent = '▶ Начать игру';
+      pauseBtn.textContent = '⏸ Пауза';
+    },
+    pauseIfRunning() { if (isRunning && !isPaused) pause(); }
+  };
+})();
+
+/* ============================================================
+   ИГРА: TETRIS
+   ============================================================ */
+const Tetris = (function() {
+  const canvas = document.getElementById('tetrisCanvas');
+  const ctx = canvas.getContext('2d');
+  const nextCanvas = document.getElementById('nextCanvas');
+  const nctx = nextCanvas.getContext('2d');
+  const scoreEl = document.getElementById('tetrisScore');
+  const bestEl = document.getElementById('tetrisBest');
+  const levelEl = document.getElementById('tetrisLevel');
+  const linesEl = document.getElementById('tetrisLines');
+  const overlay = document.getElementById('tetrisOverlay');
+  const overlayTitle = document.getElementById('tetrisOverlayTitle');
+  const overlayText = document.getElementById('tetrisOverlayText');
+  const startBtn = document.getElementById('tetrisStart');
+  const pauseBtn = document.getElementById('tetrisPause');
+  const restartBtn = document.getElementById('tetrisRestart');
+
+  const COLS = 10, ROWS = 20;
+  const BLOCK = canvas.width / COLS;
+  const NEXT_BLOCK = nextCanvas.width / 4;
+
+  const SHAPES = {
+    I: { color: '#60a5fa', cells: [[1,1,1,1]] },
+    O: { color: '#fbbf24', cells: [[1,1],[1,1]] },
+    T: { color: '#a78bfa', cells: [[0,1,0],[1,1,1]] },
+    S: { color: '#10b981', cells: [[0,1,1],[1,1,0]] },
+    Z: { color: '#ef4444', cells: [[1,1,0],[0,1,1]] },
+    J: { color: '#3b82f6', cells: [[1,0,0],[1,1,1]] },
+    L: { color: '#ec4899', cells: [[0,0,1],[1,1,1]] }
+  };
+  const KEYS = Object.keys(SHAPES);
+
+  let board = [], current = null, nextPiece = null, pos = { x: 0, y: 0 };
+  let score = 0, lines = 0, level = 1;
+  let dropCounter = 0, dropInterval = 800, lastTime = 0;
+  let animId = null;
+  let isRunning = false, isPaused = false, isGameOver = false;
+
+  let best = parseInt(localStorage.getItem('neonTetrisBest') || '0', 10);
+  bestEl.textContent = best;
+
+  function emptyBoard() { return Array.from({length: ROWS}, () => Array(COLS).fill(null)); }
+  function randomPiece() {
+    const k = KEYS[Math.floor(Math.random() * KEYS.length)];
+    return { color: SHAPES[k].color, cells: SHAPES[k].cells.map(r => r.slice()) };
+  }
+  function rotate(matrix) {
+    const N = matrix.length, M = matrix[0].length;
+    const res = Array.from({length: M}, () => Array(N).fill(0));
+    for (let y = 0; y < N; y++) for (let x = 0; x < M; x++) res[x][N - 1 - y] = matrix[y][x];
+    return res;
+  }
+  function collide(b, piece, p) {
+    const m = piece.cells;
+    for (let y = 0; y < m.length; y++) for (let x = 0; x < m[y].length; x++) {
+      if (!m[y][x]) continue;
+      const by = p.y + y, bx = p.x + x;
+      if (bx < 0 || bx >= COLS || by >= ROWS) return true;
+      if (by >= 0 && b[by][bx]) return true;
+    }
+    return false;
+  }
+  function merge(b, piece, p) {
+    piece.cells.forEach((row, y) => row.forEach((v, x) => {
+      if (v) {
+        const by = p.y + y, bx = p.x + x;
+        if (by >= 0) b[by][bx] = piece.color;
+      }
+    }));
+  }
+  function clearLines() {
+    let cleared = 0;
+    for (let y = ROWS - 1; y >= 0; y--) {
+      if (board[y].every(c => c)) {
+        board.splice(y, 1);
+        board.unshift(Array(COLS).fill(null));
+        cleared++;
+        y++;
+      }
+    }
+    if (cleared) {
+      const points = [0, 100, 300, 500, 800][cleared] || 800;
+      score += points * level;
+      lines += cleared;
+      const newLevel = Math.floor(lines / 10) + 1;
+      if (newLevel !== level) {
+        level = newLevel;
+        dropInterval = Math.max(80, 800 - (level - 1) * 70);
+      }
+      scoreEl.textContent = score;
+      linesEl.textContent = lines;
+      levelEl.textContent = level;
+    }
+  }
+  function spawn() {
+    current = nextPiece || randomPiece();
+    nextPiece = randomPiece();
+    pos = { x: Math.floor((COLS - current.cells[0].length) / 2), y: 0 };
+    drawNext();
+    if (collide(board, current, pos)) gameOver();
+  }
+  function drawBlock(c, x, y, size, color) {
+    c.save();
+    c.shadowColor = color; c.shadowBlur = 8;
+    c.fillStyle = color;
+    c.fillRect(x + 1, y + 1, size - 2, size - 2);
+    c.restore();
+    c.fillStyle = 'rgba(255,255,255,0.18)';
+    c.fillRect(x + 2, y + 2, size - 4, 3);
+  }
+  function draw() {
+    ctx.fillStyle = '#0a0e14';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = 'rgba(35, 44, 61, 0.5)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= COLS; x++) {
+      ctx.beginPath(); ctx.moveTo(x * BLOCK, 0); ctx.lineTo(x * BLOCK, canvas.height); ctx.stroke();
+    }
+    for (let y = 0; y <= ROWS; y++) {
+      ctx.beginPath(); ctx.moveTo(0, y * BLOCK); ctx.lineTo(canvas.width, y * BLOCK); ctx.stroke();
+    }
+    if (board && board.length === ROWS) {
+      for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
+        if (board[y][x]) drawBlock(ctx, x * BLOCK, y * BLOCK, BLOCK, board[y][x]);
+      }
+    }
+    if (current && !isGameOver) {
+      let ghostY = pos.y;
+      while (!collide(board, current, { x: pos.x, y: ghostY + 1 })) ghostY++;
+      if (ghostY !== pos.y) {
+        ctx.save();
+        ctx.globalAlpha = 0.15;
+        current.cells.forEach((row, y) => row.forEach((v, x) => {
+          if (!v) return;
+          const by = ghostY + y, bx = pos.x + x;
+          if (by >= 0) {
+            ctx.fillStyle = current.color;
+            ctx.fillRect(bx * BLOCK + 2, by * BLOCK + 2, BLOCK - 4, BLOCK - 4);
+          }
+        }));
+        ctx.restore();
+      }
+      current.cells.forEach((row, y) => row.forEach((v, x) => {
+        if (!v) return;
+        const by = pos.y + y, bx = pos.x + x;
+        if (by >= 0) drawBlock(ctx, bx * BLOCK, by * BLOCK, BLOCK, current.color);
+      }));
+    }
+  }
+  function drawNext() {
+    nctx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+    nctx.fillStyle = '#0a0e14';
+    nctx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
+    if (!nextPiece) return;
+    const cells = nextPiece.cells;
+    const cols = cells[0].length, rows = cells.length;
+    const offsetX = (4 - cols) / 2, offsetY = (4 - rows) / 2;
+    cells.forEach((row, y) => row.forEach((v, x) => {
+      if (!v) return;
+      const bx = (offsetX + x) * NEXT_BLOCK, by = (offsetY + y) * NEXT_BLOCK;
+      nctx.save();
+      nctx.shadowColor = nextPiece.color; nctx.shadowBlur = 6;
+      nctx.fillStyle = nextPiece.color;
+      nctx.fillRect(bx + 1, by + 1, NEXT_BLOCK - 2, NEXT_BLOCK - 2);
+      nctx.restore();
+    }));
+  }
+  function drop() {
+    if (!collide(board, current, { x: pos.x, y: pos.y + 1 })) {
+      pos.y++;
+    } else {
+      merge(board, current, pos);
+      clearLines();
+      spawn();
+    }
+    dropCounter = 0;
+  }
+  function tick(time) {
+    if (!isRunning) return;
+    const dt = time - lastTime;
+    lastTime = time;
+    if (!isPaused && !isGameOver) {
+      dropCounter += dt;
+      if (dropCounter > dropInterval) drop();
+    }
+    draw();
+    animId = requestAnimationFrame(tick);
+  }
+  function start() {
+    board = emptyBoard();
+    score = 0; lines = 0; level = 1;
+    dropCounter = 0; dropInterval = 800;
+    isRunning = true; isPaused = false; isGameOver = false;
+    scoreEl.textContent = '0'; linesEl.textContent = '0'; levelEl.textContent = '1';
+    nextPiece = randomPiece();
+    spawn();
+    overlay.classList.add('hidden');
+    lastTime = performance.now();
+    cancelAnimationFrame(animId);
+    animId = requestAnimationFrame(tick);
+    pauseBtn.textContent = '⏸ Пауза';
+  }
+  function pause() {
+    if (!isRunning || isGameOver) return;
+    isPaused = !isPaused;
+    pauseBtn.textContent = isPaused ? '▶ Продолжить' : '⏸ Пауза';
+    if (isPaused) {
+      overlay.classList.remove('hidden');
+      overlayTitle.textContent = 'ПАУЗА';
+      overlayText.textContent = 'Игра приостановлена.';
+      startBtn.textContent = '▶ Продолжить';
+    } else {
+      overlay.classList.add('hidden');
+      startBtn.textContent = '▶ Начать';
+      lastTime = performance.now();
+    }
+  }
+  function gameOver() {
+    isRunning = false; isGameOver = true;
+    cancelAnimationFrame(animId);
+    if (score > best) {
+      best = score;
+      localStorage.setItem('neonTetrisBest', String(best));
+      bestEl.textContent = best;
+    }
+    overlay.classList.remove('hidden');
+    overlayTitle.textContent = 'ИГРА ОКОНЧЕНА';
+    overlayText.textContent = `Счёт: ${score}. Линий: ${lines}. ${score >= best && score > 0 ? '🏆 Новый рекорд!' : 'Попробуй ещё!'}`;
+    startBtn.textContent = '↻ Играть снова';
+  }
+  function move(dx) {
+    if (!isRunning || isPaused || isGameOver || !current) return;
+    if (!collide(board, current, { x: pos.x + dx, y: pos.y })) pos.x += dx;
+  }
+  function rotatePiece() {
+    if (!isRunning || isPaused || isGameOver || !current) return;
+    const old = current.cells;
+    current.cells = rotate(current.cells);
+    if (collide(board, current, pos)) {
+      if (!collide(board, current, { x: pos.x + 1, y: pos.y })) pos.x += 1;
+      else if (!collide(board, current, { x: pos.x - 1, y: pos.y })) pos.x -= 1;
+      else if (!collide(board, current, { x: pos.x, y: pos.y - 1 })) pos.y -= 1;
+      else current.cells = old;
+    }
+  }
+  function softDrop() {
+    if (!isRunning || isPaused || isGameOver || !current) return;
+    drop();
+  }
+  function hardDrop() {
+    if (!isRunning || isPaused || isGameOver || !current) return;
+    while (!collide(board, current, { x: pos.x, y: pos.y + 1 })) pos.y++;
+    drop();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (!document.getElementById('view-tetris').classList.contains('active')) return;
+    const k = e.key.toLowerCase();
+    if (['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k)) e.preventDefault();
+    if (k === 'arrowleft') move(-1);
+    else if (k === 'arrowright') move(1);
+    else if (k === 'arrowdown') softDrop();
+    else if (k === 'arrowup') rotatePiece();
+    else if (k === ' ') hardDrop();
+    else if (k === 'p') pause();
+  });
+
+  startBtn.addEventListener('click', () => { if (isPaused) pause(); else start(); });
+  pauseBtn.addEventListener('click', pause);
+  restartBtn.addEventListener('click', start);
+
+  return {
+    prepare() {
+      board = emptyBoard();
+      current = null; nextPiece = null; pos = { x: 0, y: 0 };
+      score = 0; lines = 0; level = 1;
+      isRunning = false; isPaused = false; isGameOver = false;
+      cancelAnimationFrame(animId);
+      scoreEl.textContent = '0'; linesEl.textContent = '0'; levelEl.textContent = '1';
+      overlay.classList.remove('hidden');
+      overlayTitle.textContent = 'ГОТОВ?';
+      overlayText.textContent = 'Собирай линии, не дай стакану заполниться доверху.';
+      startBtn.textContent = '▶ Начать';
+      pauseBtn.textContent = '⏸ Пауза';
+      draw();
+      nctx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+      nctx.fillStyle = '#0a0e14';
+      nctx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
+    },
+    pauseIfRunning() { if (isRunning && !isPaused) pause(); }
+  };
+})();
+
+/* ============================================================
+   ИГРА: MEMORY
+   ============================================================ */
+const Memory = (function() {
+  const grid = document.getElementById('memoryGrid');
+  const movesEl = document.getElementById('memMoves');
+  const bestEl = document.getElementById('memBest');
+  const restartBtn = document.getElementById('memRestart');
+
+  const SYMBOLS = ['⚡','💎','🔥','🌟','🎯','🎨','🚀','👾'];
+  let first = null, second = null, lock = false;
+  let moves = 0, matched = 0;
+  let best = localStorage.getItem('neonMemoryBest');
+  bestEl.textContent = best || '-';
+
+  function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+  }
+  function build() {
+    const deck = [...SYMBOLS, ...SYMBOLS];
+    shuffle(deck);
+    grid.innerHTML = '';
+    deck.forEach((sym) => {
+      const card = document.createElement('div');
+      card.className = 'mem-card';
+      card.dataset.symbol = sym;
+      card.textContent = sym;
+      card.addEventListener('click', () => flip(card));
+      grid.appendChild(card);
+    });
+  }
+  function flip(card) {
+    if (lock || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+    card.classList.add('flipped');
+    if (!first) { first = card; return; }
+    second = card;
+    moves++;
+    movesEl.textContent = moves;
+    lock = true;
+    if (first.dataset.symbol === second.dataset.symbol) {
+      setTimeout(() => {
+        first.classList.add('matched');
+        second.classList.add('matched');
+        matched++;
+        reset();
+        if (matched === SYMBOLS.length) win();
+      }, 400);
+    } else {
+      setTimeout(() => {
+        first.classList.remove('flipped');
+        second.classList.remove('flipped');
+        reset();
+      }, 800);
+    }
+  }
+  function reset() { first = null; second = null; lock = false; }
+  function win() {
+    if (!best || moves < parseInt(best, 10)) {
+      best = moves;
+      localStorage.setItem('neonMemoryBest', String(best));
+      bestEl.textContent = best;
+    }
+    setTimeout(() => alert(`🎉 Победа! Ходов: ${moves}`), 300);
+  }
+  function newGame() {
+    moves = 0; matched = 0;
+    movesEl.textContent = '0';
+    reset();
+    build();
+  }
+
+  restartBtn.addEventListener('click', newGame);
+  return { prepare() { newGame(); } };
+})();
+
+/* ============================================================
+   ИГРА: КРЕСТИКИ-НОЛИКИ
+   ============================================================ */
+const TTT = (function() {
+  const gridEl = document.getElementById('tttGrid');
+  const statusEl = document.getElementById('tttStatus');
+  const winsEl = document.getElementById('tttWins');
+  const lossesEl = document.getElementById('tttLosses');
+  const restartBtn = document.getElementById('tttRestart');
+
+  let board = [], gameOver = false, busy = false;
+  let wins = parseInt(localStorage.getItem('neonTttWins') || '0', 10);
+  let losses = parseInt(localStorage.getItem('neonTttLosses') || '0', 10);
+  winsEl.textContent = wins;
+  lossesEl.textContent = losses;
+
+  const LINES = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+
+  function build() {
+    gridEl.innerHTML = '';
+    board = Array(9).fill('');
+    gameOver = false; busy = false;
+    statusEl.textContent = 'Твой ход: X';
+    for (let i = 0; i < 9; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'ttt-cell';
+      cell.dataset.index = i;
+      cell.addEventListener('click', () => playerMove(i));
+      gridEl.appendChild(cell);
+    }
+  }
+  function winner(b) {
+    for (const [a, c, d] of LINES) {
+      if (b[a] && b[a] === b[c] && b[a] === b[d]) return { sym: b[a], line: [a, c, d] };
+    }
+    return b.includes('') ? null : { sym: 'draw' };
+  }
+  function render() {
+    document.querySelectorAll('.ttt-cell').forEach((c, i) => {
+      c.textContent = board[i];
+      c.className = 'ttt-cell';
+      if (board[i] === 'X') c.classList.add('x');
+      if (board[i] === 'O') c.classList.add('o');
+    });
+  }
+  function playerMove(i) {
+    if (gameOver || busy || board[i]) return;
+    board[i] = 'X';
+    render();
+    const res = winner(board);
+    if (res) return finish(res);
+    busy = true;
+    statusEl.textContent = 'Ход компьютера...';
+    setTimeout(() => { aiMove(); busy = false; }, 350);
+  }
+  function aiMove() {
+    if (gameOver) return;
+    const idx = bestMove(board, 'O');
+    if (idx !== -1) board[idx] = 'O';
+    render();
+    const res = winner(board);
+    if (res) return finish(res);
+    statusEl.textContent = 'Твой ход: X';
+  }
+  function bestMove(b, player) {
+    for (const [a, c, d] of LINES) {
+      const line = [b[a], b[c], b[d]];
+      if (line.filter(v => v === player).length === 2 && line.includes('')) {
+        if (!b[a]) return a; if (!b[c]) return c; if (!b[d]) return d;
+      }
+    }
+    const opp = player === 'O' ? 'X' : 'O';
+    for (const [a, c, d] of LINES) {
+      const line = [b[a], b[c], b[d]];
+      if (line.filter(v => v === opp).length === 2 && line.includes('')) {
+        if (!b[a]) return a; if (!b[c]) return c; if (!b[d]) return d;
+      }
+    }
+    if (!b[4]) return 4;
+    const corners = [0, 2, 6, 8].filter(i => !b[i]);
+    if (corners.length) return corners[Math.floor(Math.random() * corners.length)];
+    const empty = b.map((v, i) => v ? -1 : i).filter(i => i !== -1);
+    if (empty.length) return empty[Math.floor(Math.random() * empty.length)];
+    return -1;
+  }
+  function finish(res) {
+    gameOver = true;
+    if (res.sym === 'draw') {
+      statusEl.textContent = '🤝 Ничья!';
+    } else if (res.sym === 'X') {
+      statusEl.textContent = '🏆 Ты победил!';
+      wins++;
+      localStorage.setItem('neonTttWins', String(wins));
+      winsEl.textContent = wins;
+      res.line.forEach(i => document.querySelector(`.ttt-cell[data-index="${i}"]`).classList.add('win'));
+    } else {
+      statusEl.textContent = '💀 Победил компьютер!';
+      losses++;
+      localStorage.setItem('neonTttLosses', String(losses));
+      lossesEl.textContent = losses;
+      res.line.forEach(i => document.querySelector(`.ttt-cell[data-index="${i}"]`).classList.add('win'));
+    }
+  }
+
+  restartBtn.addEventListener('click', build);
+  return { prepare() { build(); } };
+})();
+
+/* ============================================================
+   ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+   ============================================================ */
+const tabButtons = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+
+function switchTab(target) {
+  tabButtons.forEach(b => b.classList.remove('active'));
+  tabContents.forEach(c => c.classList.remove('active'));
+  const btn = document.querySelector(`.tab-btn[data-tab="${target}"]`);
+  if (btn) btn.classList.add('active');
+  document.getElementById('tab-' + target).classList.add('active');
+  if (target !== 'game') {
+    Snake.pauseIfRunning();
+    Tetris.pauseIfRunning();
+  }
+}
+
+tabButtons.forEach(btn => {
+  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+});
+
+/* ============================================================
+   КЛИК ПО ЛОГОТИПУ → ПЛАВНЫЙ ПЕРЕХОД НА ГЛАВНУЮ
+   ============================================================ */
+const homeLogo = document.getElementById('homeLogo');
+homeLogo.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(() => {
+    if (gamesMenu.style.display === 'none') {
+      showMenu();
+    }
+    switchTab('home');
+  }, 150);
+});
+
+/* ============================================================
+   МЕНЮ ИГР ↔ ИГРОВЫЕ ЭКРАНЫ
+   ============================================================ */
+const gamesMenu = document.getElementById('gamesMenu');
+const gameViews = document.querySelectorAll('.game-view');
+
+function showGame(name) {
+  gamesMenu.style.display = 'none';
+  gameViews.forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+
+  Stats.trackGame(name);
+
+  try {
+    if (name === 'snake') Snake.prepare();
+    if (name === 'tetris') Tetris.prepare();
+    if (name === 'memory') Memory.prepare();
+    if (name === 'ttt') TTT.prepare();
+  } catch (err) {
+    console.error('Ошибка при открытии игры:', err);
+  }
+}
+function showMenu() {
+  Snake.pauseIfRunning();
+  Tetris.pauseIfRunning();
+  gameViews.forEach(v => v.classList.remove('active'));
+  gamesMenu.style.display = 'grid';
+}
+document.querySelectorAll('.game-card').forEach(card => {
+  card.addEventListener('click', () => showGame(card.dataset.game));
+});
+document.querySelectorAll('[data-back]').forEach(btn => {
+  btn.addEventListener('click', showMenu);
+});
+
+/* ============================================================
+   ЗАПУСК
+   ============================================================ */
+drawPreviews();
+Stats.init();
+
+/* Таймер «в сети» */
+(function() {
+  const statTime = document.getElementById('statTime');
+  if (!statTime) return;
+  let seconds = 0;
+  setInterval(() => {
+    seconds++;
+    statTime.textContent = seconds + 'с';
+  }, 1000);
+})();
+</script>
+
+</body>
+</html>
